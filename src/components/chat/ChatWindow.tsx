@@ -12,6 +12,7 @@ import {
   doc,
   Timestamp,
   setDoc,
+  getDoc,
 } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -20,6 +21,14 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
 import { AddMember } from "./AddMember";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { UserSettings } from "../settings/UserSettings";
 
 type MessageType = {
   id: string;
@@ -33,8 +42,44 @@ type MessageType = {
 export function ChatWindow({ chatId }: { chatId: string | null }) {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [newMessage, setNewMessage] = useState("");
+  const [userName, setUsername] = useState("");
   // const [participants, setParticipants] = useState<any[]>([]);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!chatId) return;
+
+    // Fetch the chat participants (if applicable) and set username
+    const fetchUserName = async () => {
+      try {
+        const chatRef = doc(db, "chats", chatId);
+        const chatSnapshot = await getDoc(chatRef);
+
+        if (chatSnapshot.exists()) {
+          const participants = chatSnapshot.data()?.participants || [];
+          // Assuming you want to get the name of the other participant, not the current user
+          const otherParticipant = participants.find(
+            (participant: string) => participant !== auth?.currentUser?.uid
+          );
+
+          if (otherParticipant) {
+            const userRef = doc(db, "users", otherParticipant);
+            const userSnapshot = await getDoc(userRef);
+
+            if (userSnapshot.exists()) {
+              const fetchedUserName =
+                userSnapshot.data()?.name || "Unknown User";
+              setUsername(fetchedUserName);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching username:", error);
+      }
+    };
+
+    fetchUserName();
+  }, [chatId]);
 
   useEffect(() => {
     if (!chatId) return;
@@ -118,10 +163,25 @@ export function ChatWindow({ chatId }: { chatId: string | null }) {
   return (
     <div className="flex flex-col h-full">
       <div className="p-4 border-b flex justify-between items-center">
-        <h2 className="text-xl font-semibold">Chat</h2>
-        <AddMember />
+        <h2 className="text-xl font-semibold">
+          {userName ? userName : "Chat"}
+        </h2>
+        <div className="flex items-center gap-3">
+          <AddMember />
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Settings</Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>User Settings</DialogTitle>
+              </DialogHeader>
+              <UserSettings />
+            </DialogContent>
+          </Dialog>
+        </div>
       </div>
-      <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
+      <ScrollArea ref={scrollAreaRef} className="h-full p-4">
         <AnimatePresence>
           {messages?.map((message) => (
             <motion.div

@@ -45,26 +45,28 @@ export default function ChatPage() {
     <div className="flex h-screen">
       <ChatSidebar onSelectChat={setSelectedChat} />
       <div className="flex-1 flex flex-col">
-        <header className="bg-white shadow-sm p-4 flex justify-between items-center">
-          <h1 className="text-xl font-semibold">Simple Chat </h1>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline">Settings</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>User Settings</DialogTitle>
-              </DialogHeader>
-              <UserSettings />
-            </DialogContent>
-          </Dialog>
-        </header>
         {selectedChat ? (
           <ChatWindow chatId={selectedChat} />
         ) : (
-          <div className="flex-1 flex items-center justify-center text-gray-500">
-            Select a chat to start messaging
-          </div>
+          <>
+            <header className="bg-white shadow-sm p-4 flex justify-between items-center">
+              <h1 className="text-xl font-semibold">Simple Chat </h1>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button variant="outline">Settings</Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>User Settings</DialogTitle>
+                  </DialogHeader>
+                  <UserSettings />
+                </DialogContent>
+              </Dialog>
+            </header>
+            <div className="flex-1 flex items-center justify-center text-gray-500">
+              Select a chat to start messaging
+            </div>
+          </>
         )}
       </div>
     </div>

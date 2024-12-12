@@ -7,6 +7,8 @@ import {
   where,
   orderBy,
   onSnapshot,
+  doc as firestoreDoc,
+  getDoc,
   Timestamp,
 } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
@@ -17,7 +19,7 @@ import { motion } from "framer-motion";
 import CreateGroupChat from "./CreateGroupChat";
 import { AddMember } from "./AddMember";
 
-type ChatType = {
+interface ChatType {
   id: string;
   createdAt: Timestamp;
   lastMessage: string;
@@ -25,7 +27,8 @@ type ChatType = {
   name: string;
   participants: string[];
   type: string;
-};
+  otherParticipantName?: string;
+}
 
 export function ChatSidebar({
   onSelectChat,
@@ -34,6 +37,7 @@ export function ChatSidebar({
 }) {
   const [chats, setChats] = useState<ChatType[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const user = auth.currentUser;
@@ -45,19 +49,62 @@ export function ChatSidebar({
       orderBy("lastMessageTime", "desc")
     );
 
-    const unsubscribe = onSnapshot(q, (snapshot) => {
-      const chatData: ChatType[] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as ChatType[];
+    const unsubscribe = onSnapshot(
+      q,
+      async (snapshot) => {
+        try {
+          const chatData: ChatType[] = await Promise.all(
+            snapshot.docs.map(async (doc) => {
+              const chat = doc.data() as ChatType;
+              const otherParticipant = chat.participants.find(
+                (participant) => participant !== user.uid
+              );
 
-      setChats(chatData);
-    });
+              let otherParticipantName = "Unknown User";
+              if (otherParticipant) {
+                try {
+                  const userRef = firestoreDoc(db, "users", otherParticipant);
+                  const userSnapshot = await getDoc(userRef);
+                  if (userSnapshot.exists()) {
+                    otherParticipantName =
+                      userSnapshot.data()?.name || "Unknown User";
+                  }
+                } catch (error) {
+                  console.error(
+                    "Error fetching other participant name:",
+                    error
+                  );
+                }
+              }
+
+              return {
+                ...chat,
+                otherParticipantName,
+                id: doc.id,
+              };
+            })
+          );
+
+          setChats(chatData);
+        } catch (error) {
+          console.error("Error fetching chats:", error);
+        } finally {
+          setLoading(false);
+        }
+      },
+      (error) => {
+        console.error("Error in onSnapshot listener:", error);
+        setLoading(false);
+      }
+    );
 
     return () => unsubscribe();
   }, []);
 
-  const filteredChats = chats;
+  const filteredChats = chats.filter((chat) =>
+    chat.otherParticipantName?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="w-64 border-r border-gray-200 h-full flex flex-col">
       <div className="p-4">
@@ -74,27 +121,37 @@ export function ChatSidebar({
         </div>
       </div>
       <ScrollArea className="flex-1">
-        {filteredChats?.map((chat, index) => (
-          <motion.div
-            key={chat.id}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
-          >
-            <Button
-              variant="ghost"
-              className="w-full justify-start py-3"
-              onClick={() => onSelectChat(chat.id)}
+        {loading ? (
+          <div className="text-center text-gray-500">Loading chats...</div>
+        ) : filteredChats.length > 0 ? (
+          filteredChats.map((chat, index) => (
+            <motion.div
+              key={chat.id}
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
             >
-              <div className="text-left">
-                <div className="font-medium">{chat?.name}</div>
-                <div className="text-sm text-gray-500 truncate">
-                  {chat?.lastMessage}
+              <Button
+                variant="ghost"
+                className="w-full justify-start py-3"
+                onClick={() => onSelectChat(chat.id)}
+              >
+                <div className="text-left">
+                  <div className="font-medium">
+                    {chat.type === "group"
+                      ? chat.name
+                      : chat.otherParticipantName}
+                  </div>
+                  <div className="text-sm text-gray-500 truncate">
+                    {chat?.lastMessage}
+                  </div>
                 </div>
-              </div>
-            </Button>
-          </motion.div>
-        ))}
+              </Button>
+            </motion.div>
+          ))
+        ) : (
+          <div className="text-center text-gray-500">No chats found.</div>
+        )}
       </ScrollArea>
     </div>
   );
