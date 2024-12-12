@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { updateProfile, User } from "firebase/auth";
+import { updateProfile } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
