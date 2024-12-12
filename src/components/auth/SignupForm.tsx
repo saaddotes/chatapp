@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth } from "@/lib/firebase";
+import { auth, db } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { doc, setDoc } from "firebase/firestore";
 
 export function SignupForm() {
   const [name, setName] = useState("");
@@ -18,12 +19,25 @@ export function SignupForm() {
     e.preventDefault();
     toast.promise(
       (async () => {
+        // Create a new user with Firebase Auth
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           email,
           password
         );
+
+        // Update the user's display name in Firebase Auth
         await updateProfile(userCredential.user, { displayName: name });
+
+        // Save the user's basic info to Firestore
+        const userDoc = {
+          name,
+          email,
+          role: "user", // Default role; can be updated as needed
+          createdAt: new Date().toISOString(), // Add a timestamp
+        };
+
+        await setDoc(doc(db, "users", userCredential.user.uid), userDoc);
       })(),
       {
         loading: "Creating your account...",
