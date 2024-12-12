@@ -13,12 +13,12 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { useToast } from "@/hooks/use-toast";
+// import { useToast } from "@/hooks/use-toast";
 
 export default function CreateGroupChat() {
   const [groupName, setGroupName] = useState("");
   const [participants, setParticipants] = useState("");
-  const { toast } = useToast();
+  // const { toast } = useToast();
 
   const handleCreateGroup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,11 +28,11 @@ export default function CreateGroupChat() {
     const currentUser = auth.currentUser;
 
     if (!currentUser) {
-      toast({
-        title: "Error",
-        description: "You must be logged in to create a group chat.",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Error",
+      //   description: "You must be logged in to create a group chat.",
+      //   variant: "destructive",
+      // });
       return;
     }
 
@@ -47,17 +47,17 @@ export default function CreateGroupChat() {
       });
       setGroupName("");
       setParticipants("");
-      toast({
-        title: "Group Created",
-        description: "Your new group chat has been created successfully.",
-      });
+      // toast({
+      //   title: "Group Created",
+      //   description: "Your new group chat has been created successfully.",
+      // });
     } catch (error) {
       console.error("Error creating group chat:", error);
-      toast({
-        title: "Error",
-        description: "Failed to create group chat. Please try again.",
-        variant: "destructive",
-      });
+      // toast({
+      //   title: "Error",
+      //   description: "Failed to create group chat. Please try again.",
+      //   variant: "destructive",
+      // });
     }
   };
 

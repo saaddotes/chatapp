@@ -33,18 +33,18 @@ type MessageType = {
 export function ChatWindow({ chatId }: { chatId: string | null }) {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [newMessage, setNewMessage] = useState("");
-  const [participants, setParticipants] = useState<any[]>([]);
+  // const [participants, setParticipants] = useState<any[]>([]);
   const scrollAreaRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!chatId) return;
 
-    const chatRef = doc(db, "chats", chatId);
-    const unsubscribeChat = onSnapshot(chatRef, (doc) => {
-      if (doc.exists()) {
-        setParticipants(doc.data().participants || []);
-      }
-    });
+    // const chatRef = doc(db, "chats", chatId);
+    // const unsubscribeChat = onSnapshot(chatRef, (doc) => {
+    //   if (doc.exists()) {
+    //     setParticipants(doc.data().participants || []);
+    //   }
+    // });
 
     const q = query(
       collection(db, `chats/${chatId}/messages`),
@@ -53,15 +53,23 @@ export function ChatWindow({ chatId }: { chatId: string | null }) {
     );
 
     const unsubscribeMessages = onSnapshot(q, (snapshot) => {
-      const messageData: MessageType[] = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const messageData: MessageType[] = snapshot.docs.map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          sender: data.sender,
+          senderAvatar: data.senderAvatar || "", // Fallback
+          senderName: data.senderName || "", // Fallback
+          text: data.text,
+          timestamp: data.timestamp || Timestamp.now(), // Fallback
+        };
+      });
+
       setMessages(messageData);
     });
 
     return () => {
-      unsubscribeChat();
+      // unsubscribeChat();
       unsubscribeMessages();
     };
   }, [chatId]);
@@ -81,6 +89,11 @@ export function ChatWindow({ chatId }: { chatId: string | null }) {
       sender: auth?.currentUser?.uid,
       timestamp: serverTimestamp(),
     });
+
+    if (!chatId) {
+      console.error("Chat ID is null");
+      return;
+    }
 
     await setDoc(
       doc(db, "chats", chatId),

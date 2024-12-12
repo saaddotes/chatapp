@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { updateProfile } from "firebase/auth";
+import { updateProfile, User } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,7 +17,7 @@ export function UserSettings() {
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.promise(updateProfile(auth.currentUser, { displayName }), {
+    toast.promise(updateProfile(auth.currentUser as User, { displayName }), {
       loading: "Updating profile...",
       success: "Your profile has been successfully updated.",
       error: "Failed to update profile. Please try again.",

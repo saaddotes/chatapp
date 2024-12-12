@@ -2,7 +2,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import React from "react";
 import { Toaster } from "react-hot-toast";
-import { Toaster as ShadToaster } from "@/components/ui/toaster";
+// import { Toaster as ShadToaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,7 +23,7 @@ export default function RootLayout({
           <Toaster />
         </div>
         {children}
-        <ShadToaster />
+        {/* <ShadToaster /> */}
       </body>
     </html>
   );
