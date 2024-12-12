@@ -18,7 +18,7 @@ import { db, auth } from "@/lib/firebase";
 // import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
+// import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion, AnimatePresence } from "framer-motion";
 import { AddMember } from "./AddMember";
 import {
@@ -182,7 +182,23 @@ export function ChatWindow({
       <div className="p-4 border-b flex justify-between items-center">
         <div className="flex gap-1 items-center">
           <Button variant={"outline"} onClick={() => setSelectedChat(null)}>
-            {"<"}
+            <svg
+              className="w-6 h-6 text-gray-800 dark:text-white"
+              aria-hidden="true"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              fill="none"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="m15 19-7-7 7-7"
+              />
+            </svg>
           </Button>
           <h2 className="text-xl font-semibold">
             {userName ? userName : "Chat"}
@@ -194,7 +210,7 @@ export function ChatWindow({
             <DialogTrigger asChild>
               <Button variant="outline">Settings</Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
               <DialogHeader>
                 <DialogTitle>User Settings</DialogTitle>
               </DialogHeader>

@@ -114,7 +114,7 @@ export function ChatSidebar({
   );
 
   return (
-    <div className="w-full md:w-64 border-r border-gray-200 h-full flex flex-col">
+    <div className="w-full md:w-64 border-r border-gray-200 h-dvh flex flex-col">
       <div className="p-4">
         <Input
           type="text"
@@ -138,10 +138,11 @@ export function ChatSidebar({
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
+              className="px-2"
             >
               <Button
-                variant="ghost"
-                className="w-full justify-start py-3"
+                variant="secondary"
+                className="w-full justify-between h-16 rounded-lg"
                 onClick={() => onSelectChat(chat.id)}
               >
                 <div className="text-left">
@@ -154,6 +155,16 @@ export function ChatSidebar({
                     {chat?.lastMessage}
                   </div>
                 </div>
+                <h1 className="text-right text-xs">
+                  {chat?.lastMessageTime
+                    ? new Date(
+                        chat?.lastMessageTime.seconds * 1000
+                      ).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "Just now"}
+                </h1>
               </Button>
             </motion.div>
           ))
@@ -161,14 +172,14 @@ export function ChatSidebar({
           <div className="text-center text-gray-500">No chats found.</div>
         )}
       </ScrollArea>
-      <div>
+      <div className="px-4">
         <Dialog>
           <DialogTrigger asChild>
             <Button variant="outline" className="w-full mb-5">
               Settings
             </Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
             <DialogHeader>
               <DialogTitle>User Settings</DialogTitle>
             </DialogHeader>

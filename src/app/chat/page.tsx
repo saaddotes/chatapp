@@ -43,7 +43,7 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-screen">
-      <div className={`${selectedChat ? "hidden md:block" : ""}`}>
+      <div className={`${selectedChat ? "hidden md:block" : "w-full md:w-64"}`}>
         <ChatSidebar onSelectChat={setSelectedChat} />
       </div>
       <div
@@ -61,7 +61,7 @@ export default function ChatPage() {
                 <DialogTrigger asChild>
                   <Button variant="outline">Settings</Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
                   <DialogHeader>
                     <DialogTitle>User Settings</DialogTitle>
                   </DialogHeader>
@@ -69,7 +69,7 @@ export default function ChatPage() {
                 </DialogContent>
               </Dialog>
             </header>
-            <div className="flex-1 flex items-center justify-center text-gray-500">
+            <div className="h-full flex items-center justify-center text-gray-500">
               Select a chat to start messaging
             </div>
           </>

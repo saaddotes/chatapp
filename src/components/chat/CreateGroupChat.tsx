@@ -64,7 +64,9 @@ export default function CreateGroupChat() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button variant="outline">Create Group Chat</Button>
+        <Button variant="outline" disabled>
+          Create Group Chat
+        </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
