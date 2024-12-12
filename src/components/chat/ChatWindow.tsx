@@ -39,7 +39,13 @@ type MessageType = {
   timestamp: Timestamp;
 };
 
-export function ChatWindow({ chatId }: { chatId: string | null }) {
+export function ChatWindow({
+  chatId,
+  setSelectedChat,
+}: {
+  chatId: string | null;
+  setSelectedChat: (id: string | null) => void;
+}) {
   const [messages, setMessages] = useState<MessageType[]>([]);
   const [newMessage, setNewMessage] = useState("");
   const [userName, setUsername] = useState("");
@@ -120,8 +126,19 @@ export function ChatWindow({ chatId }: { chatId: string | null }) {
   }, [chatId]);
 
   useEffect(() => {
+    console.log(
+      "Scroll",
+      scrollAreaRef.current,
+      messages,
+      scrollAreaRef?.current?.scrollHeight
+    );
     if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo(0, scrollAreaRef.current.scrollHeight);
+      requestAnimationFrame(() => {
+        scrollAreaRef.current?.scrollTo({
+          top: scrollAreaRef.current.scrollHeight,
+          behavior: "smooth",
+        });
+      });
     }
   }, [messages]);
 
@@ -161,11 +178,16 @@ export function ChatWindow({ chatId }: { chatId: string | null }) {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-dvh">
       <div className="p-4 border-b flex justify-between items-center">
-        <h2 className="text-xl font-semibold">
-          {userName ? userName : "Chat"}
-        </h2>
+        <div className="flex gap-1 items-center">
+          <Button variant={"outline"} onClick={() => setSelectedChat(null)}>
+            {"<"}
+          </Button>
+          <h2 className="text-xl font-semibold">
+            {userName ? userName : "Chat"}
+          </h2>
+        </div>
         <div className="flex items-center gap-3">
           <AddMember />
           <Dialog>
@@ -181,7 +203,11 @@ export function ChatWindow({ chatId }: { chatId: string | null }) {
           </Dialog>
         </div>
       </div>
-      <ScrollArea ref={scrollAreaRef} className="h-full p-4">
+      <div
+        ref={scrollAreaRef}
+        className="h-full p-4 overflow-auto"
+        style={{ maxHeight: "100%" }}
+      >
         <AnimatePresence>
           {messages?.map((message) => (
             <motion.div
@@ -232,7 +258,7 @@ export function ChatWindow({ chatId }: { chatId: string | null }) {
             </motion.div>
           ))}
         </AnimatePresence>
-      </ScrollArea>
+      </div>
       <form
         onSubmit={handleSendMessage}
         className="p-4 border-t border-gray-200"

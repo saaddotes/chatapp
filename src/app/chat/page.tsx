@@ -43,10 +43,16 @@ export default function ChatPage() {
 
   return (
     <div className="flex h-screen">
-      <ChatSidebar onSelectChat={setSelectedChat} />
-      <div className="flex-1 flex flex-col">
+      <div className={`${selectedChat ? "hidden md:block" : ""}`}>
+        <ChatSidebar onSelectChat={setSelectedChat} />
+      </div>
+      <div
+        className={`flex-1 flex flex-col ${
+          !selectedChat ? "hidden md:block" : ""
+        }`}
+      >
         {selectedChat ? (
-          <ChatWindow chatId={selectedChat} />
+          <ChatWindow chatId={selectedChat} setSelectedChat={setSelectedChat} />
         ) : (
           <>
             <header className="bg-white shadow-sm p-4 flex justify-between items-center">

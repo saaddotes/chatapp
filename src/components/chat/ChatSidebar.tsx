@@ -18,6 +18,14 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { motion } from "framer-motion";
 import CreateGroupChat from "./CreateGroupChat";
 import { AddMember } from "./AddMember";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
+import { UserSettings } from "../settings/UserSettings";
 
 interface ChatType {
   id: string;
@@ -106,7 +114,7 @@ export function ChatSidebar({
   );
 
   return (
-    <div className="w-64 border-r border-gray-200 h-full flex flex-col">
+    <div className="w-full md:w-64 border-r border-gray-200 h-full flex flex-col">
       <div className="p-4">
         <Input
           type="text"
@@ -153,6 +161,21 @@ export function ChatSidebar({
           <div className="text-center text-gray-500">No chats found.</div>
         )}
       </ScrollArea>
+      <div>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="w-full mb-5">
+              Settings
+            </Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>User Settings</DialogTitle>
+            </DialogHeader>
+            <UserSettings />
+          </DialogContent>
+        </Dialog>
+      </div>
     </div>
   );
 }
