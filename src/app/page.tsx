@@ -42,9 +42,7 @@ export default function Home() {
         transition={{ duration: 0.5 }}
         className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
       >
-        <h1 className="text-3xl font-bold text-center mb-6">
-          Welcome to Chat App
-        </h1>
+        <h1 className="text-3xl font-bold text-center mb-6">Simple Chat</h1>
         <Tabs defaultValue="login" className="space-y-4">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Login</TabsTrigger>

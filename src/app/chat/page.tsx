@@ -46,7 +46,7 @@ export default function ChatPage() {
       <ChatSidebar onSelectChat={setSelectedChat} />
       <div className="flex-1 flex flex-col">
         <header className="bg-white shadow-sm p-4 flex justify-between items-center">
-          <h1 className="text-xl font-semibold">Chat App</h1>
+          <h1 className="text-xl font-semibold">Simple Chat </h1>
           <Dialog>
             <DialogTrigger asChild>
               <Button variant="outline">Settings</Button>
