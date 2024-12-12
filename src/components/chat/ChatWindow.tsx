@@ -14,7 +14,7 @@ import {
   setDoc,
 } from "firebase/firestore";
 import { db, auth } from "@/lib/firebase";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+// import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -143,12 +143,22 @@ export function ChatWindow({ chatId }: { chatId: string | null }) {
                     : "flex-row"
                 } items-end`}
               >
-                <Avatar className="w-8 h-8">
+                <div className="text-xs text-gray-500 mx-2">
+                  {message.timestamp
+                    ? new Date(
+                        message.timestamp.seconds * 1000
+                      ).toLocaleTimeString([], {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })
+                    : "Just now"}
+                </div>{" "}
+                {/* <Avatar className="w-8 h-8">
                   <AvatarImage src={message.senderAvatar} />
                   <AvatarFallback>
                     {message.senderName ? message.senderName[0] : "?"}
                   </AvatarFallback>
-                </Avatar>
+                </Avatar> */}
                 <div
                   className={`mx-2 p-3 rounded-lg ${
                     message.sender === auth.currentUser?.uid

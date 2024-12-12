@@ -57,11 +57,7 @@ export function ChatSidebar({
     return () => unsubscribe();
   }, []);
 
-  const filteredChats = chats.filter(
-    (chat) =>
-      chat?.name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      chat?.lastMessage?.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredChats = chats;
   return (
     <div className="w-64 border-r border-gray-200 h-full flex flex-col">
       <div className="p-4">

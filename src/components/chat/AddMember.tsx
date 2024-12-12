@@ -39,8 +39,8 @@ export function AddMember() {
       (async () => {
         // Search for the user by email
         const usersRef = collection(db, "users");
-        const q = query(usersRef, where("email", "==", memberUid));
-        const userSnap = await getDocs(q);
+        const userQuery = query(usersRef, where("email", "==", memberUid));
+        const userSnap = await getDocs(userQuery);
 
         if (userSnap.empty) {
           throw new Error("The specified user does not exist.");
@@ -49,8 +49,26 @@ export function AddMember() {
         const userDoc = userSnap.docs[0];
         const memberUIDFetched = userDoc.id;
 
+        // Check if a chat already exists
+        const chatsRef = collection(db, "chats");
+        const chatQuery = query(
+          chatsRef,
+          where("type", "==", "private"),
+          where("participants", "array-contains", currentUser.uid)
+        );
+        const chatsSnap = await getDocs(chatQuery);
+
+        const chatExists = chatsSnap.docs.some((doc) => {
+          const participants = doc.data().participants;
+          return participants.includes(memberUIDFetched);
+        });
+
+        if (chatExists) {
+          throw new Error("A chat with this member already exists.");
+        }
+
         // Create a new chat document
-        await addDoc(collection(db, "chats"), {
+        await addDoc(chatsRef, {
           type: "private",
           participants: [currentUser.uid, memberUIDFetched],
           createdAt: serverTimestamp(),
@@ -64,7 +82,8 @@ export function AddMember() {
       {
         loading: "Adding member...",
         success: "Member added successfully!",
-        error: "Failed to add member. Please try again.",
+        error: (err: Error) =>
+          err.message || "Failed to add member. Please try again.",
       }
     );
   };
