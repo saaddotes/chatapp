@@ -178,7 +178,7 @@ export function ChatWindow({
   }
 
   return (
-    <div className="flex flex-col h-dvh">
+    <div className="flex flex-col h-full">
       <div className="p-4 border-b flex justify-between items-center">
         <div className="flex gap-1 items-center">
           <Button variant={"outline"} onClick={() => setSelectedChat(null)}>

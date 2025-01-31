@@ -114,7 +114,7 @@ export function ChatSidebar({
   );
 
   return (
-    <div className="w-full md:w-64 border-r border-gray-200 h-dvh flex flex-col">
+    <div className="w-full md:w-64 border-r border-gray-200 h-full flex flex-col">
       <div className="p-4">
         <Input
           type="text"
@@ -138,7 +138,7 @@ export function ChatSidebar({
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className="px-2"
+              className="px-2 mb-2"
             >
               <Button
                 variant="secondary"

@@ -37,7 +37,6 @@ export function AddMember() {
 
     toast.promise(
       (async () => {
-        // Search for the user by email
         const usersRef = collection(db, "users");
         const userQuery = query(usersRef, where("email", "==", memberUid));
         const userSnap = await getDocs(userQuery);
@@ -49,7 +48,6 @@ export function AddMember() {
         const userDoc = userSnap.docs[0];
         const memberUIDFetched = userDoc.id;
 
-        // Check if a chat already exists
         const chatsRef = collection(db, "chats");
         const chatQuery = query(
           chatsRef,
@@ -67,17 +65,16 @@ export function AddMember() {
           throw new Error("A chat with this member already exists.");
         }
 
-        // Create a new chat document
         await addDoc(chatsRef, {
           type: "private",
           participants: [currentUser.uid, memberUIDFetched],
           createdAt: serverTimestamp(),
           lastMessageTime: serverTimestamp(),
           lastMessage: "",
-          name: memberUid, // Set a default or dynamic chat name
+          name: memberUid,
         });
 
-        setMemberUid(""); // Clear input
+        setMemberUid("");
       })(),
       {
         loading: "Adding member...",

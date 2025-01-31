@@ -34,14 +34,14 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-400 via-pink-500 to-red-500">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-slate-400 via-slate-500 to-slate-600">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
         className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md"
       >
-        <h1 className="text-3xl font-bold text-center mb-6">Simple Chat</h1>
+        <h1 className="text-3xl font-bold text-center mb-6">Quick Chat</h1>
         <Tabs defaultValue="login" className="space-y-4">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="login">Login</TabsTrigger>

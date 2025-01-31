@@ -56,7 +56,7 @@ export default function ChatPage() {
         ) : (
           <>
             <header className="bg-white shadow-sm p-4 flex justify-between items-center">
-              <h1 className="text-xl font-semibold">Simple Chat </h1>
+              <h1 className="text-xl font-semibold">Quick Chat </h1>
               <Dialog>
                 <DialogTrigger asChild>
                   <Button variant="outline">Settings</Button>
@@ -69,7 +69,7 @@ export default function ChatPage() {
                 </DialogContent>
               </Dialog>
             </header>
-            <div className="h-full flex items-center justify-center text-gray-500">
+            <div className="flex-1 h-[60vh] flex items-center justify-center text-gray-500">
               Select a chat to start messaging
             </div>
           </>
